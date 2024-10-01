@@ -1,3 +1,7 @@
+import sys
+import os
+print("Python path:", sys.path)
+
 import logging
 from flask import Flask, render_template, request, jsonify
 from search_service import SearchService
@@ -10,6 +14,25 @@ app.config.from_object(Config)
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Check if .env file exists
+env_path = os.path.join(os.getcwd(), '.env')
+if os.path.exists(env_path):
+    logger.info(f".env file found at {env_path}")
+else:
+    logger.error(f".env file not found at {env_path}")
+
+# Print config values
+logger.info(f"TAVILY_API_KEY from config: {app.config['TAVILY_API_KEY']}")
+logger.info(f"ANTHROPIC_API_KEY from config: {app.config['ANTHROPIC_API_KEY']}")
+
+if not app.config['TAVILY_API_KEY']:
+    logger.error("TAVILY_API_KEY is not set. Please check your .env file.")
+    sys.exit(1)
+
+if not app.config['ANTHROPIC_API_KEY']:
+    logger.error("ANTHROPIC_API_KEY is not set. Please check your .env file.")
+    sys.exit(1)
 
 search_service = SearchService(app.config['TAVILY_API_KEY'])
 ai_service = AIService(app.config['ANTHROPIC_API_KEY'])

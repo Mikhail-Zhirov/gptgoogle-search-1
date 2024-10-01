@@ -1,5 +1,11 @@
 import logging
-from tavily import TavilyClient
+try:
+    from tavily import Client as TavilyClient
+except ImportError:
+    print("Error: Tavily package not found. Please make sure it's installed correctly.")
+    print("Try running: pip install tavily-python==0.3.1")
+    raise
+
 from requests.exceptions import RequestException
 
 class SearchService:
